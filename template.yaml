@@ -1,21 +1,26 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
 Resources:
-  GenerateImageFunction:
+  GenerateImageFunctionphilliptran:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: philliptran/
       Handler: lambda_function.lambda_handler
       Runtime: python3.10
       MemorySize: 512
-      Timeout: 900
+      Timeout: 500
       Policies:
-        - S3WritePolicy:
-            BucketName: pgr301-couch-explorers
+        - Statement:
+            Effect: Allow
+            Action:
+              - s3:PutObject
+            Resource: arn:aws:s3:::pgr301-couch-explorers/*
         - AWSLambdaBasicExecutionRole
       Environment:
         Variables:
           S3_BUCKET_NAME: "pgr301-couch-explorers"
-          MODEL_ID: "amazon.titan-image-generator-v1" 
-          CANDIDATE_ID: "6" # Replace with your candidate ID
+          MODEL_ID: "amazon.titan-image-generator-v1"
+          CANDIDATE_ID: "6"
       Events:
         ImageAPI:
           Type: Api
