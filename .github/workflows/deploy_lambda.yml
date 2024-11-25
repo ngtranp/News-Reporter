@@ -1,0 +1,37 @@
+name: Deploy SAM Application for lambda 
+
+on:
+  push:
+    branches:
+      - main  # Trigger on pushes to the main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Install AWS SAM CLI
+        run: |
+          sudo pip install aws-sam-cli
+
+
+      - name: Build SAM Application
+        run: sam build
+
+      # Deploy SAM Application
+      - name: Deploy SAM Application
+        run: |
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset \
+            --stack-name app-philliptran \
+            --capabilities CAPABILITY_IAM \
+            --region ${{ secrets.AWS_REGION }}
